@@ -1,6 +1,6 @@
 Language: [English](README.md)
 
-# json_localization_translator
+# mx_assets_obfuscate
 [![Pub](https://img.shields.io/pub/v/mx_assets_obfuscate.svg?style=flat-square)](https://pub.dartlang.org/packages/mx_assets_obfuscate)
 
 flutter project assets obfuscate
