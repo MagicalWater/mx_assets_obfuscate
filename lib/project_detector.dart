@@ -10,6 +10,13 @@ class ProjectDetector {
   /// lib/res/images.dart
   String? imagesDartPath;
 
+  /// 資源路徑
+  final String assetsPath;
+
+  ProjectDetector({
+    required this.assetsPath,
+  });
+
   /// 搜索pubspec以及images檔案
   void search(String projectPath) {
     pubspecYamlPath = join(projectPath, 'pubspec.yaml');
@@ -31,25 +38,31 @@ class ProjectDetector {
     final pubspecFile = File(pubspecYamlPath!);
     final allLine = pubspecFile.readAsLinesSync();
 
-    final assetsRegex = RegExp(r'-\x20*assets/images(.+)');
+    final assetsRegex = RegExp('-\x20*$assetsPath(.+)');
+
+    bool haveChange = false;
+
     for (int i = 0; i < allLine.length; i++) {
       final text = allLine[i];
 
       final match = assetsRegex.firstMatch(text);
       if (match != null && match.groupCount == 1) {
+        haveChange = true;
         final relativePath = match.group(1)!;
         final obfuscateRelativePath =
             relativePath.split('/').map((e) => map[e] ?? e).join('/');
 
         final replaceText =
-            '${text.substring(0, match.start)}- assets/images$obfuscateRelativePath';
+            '${text.substring(0, match.start)}- $assetsPath$obfuscateRelativePath';
 
         allLine[i] = replaceText;
       }
     }
 
-    // 將替換好的文字寫回去
-    pubspecFile.writeAsStringSync(allLine.join('\n'));
+    if (haveChange) {
+      // 將替換好的文字寫回去
+      pubspecFile.writeAsStringSync(allLine.join('\n'));
+    }
   }
 
   /// 套用至images.dart
@@ -57,8 +70,12 @@ class ProjectDetector {
     final pubspecFile = File(imagesDartPath!);
     final allLine = pubspecFile.readAsLinesSync();
 
-    final assetsRegex = RegExp(r'assets/images(.+)"');
+    final assetsRegex = RegExp('$assetsPath(.+)"');
+
+    bool haveChange = false;
+
     for (int i = 0; i < allLine.length; i++) {
+      haveChange = true;
       final text = allLine[i];
 
       final match = assetsRegex.firstMatch(text);
@@ -68,13 +85,15 @@ class ProjectDetector {
             relativePath.split('/').map((e) => map[e] ?? e).join('/');
 
         final replaceText =
-            '${text.substring(0, match.start)}assets/images$obfuscateRelativePath";';
+            '${text.substring(0, match.start)}$assetsPath$obfuscateRelativePath";';
 
         allLine[i] = replaceText;
       }
     }
 
-    // 將替換好的文字寫回去
-    pubspecFile.writeAsStringSync(allLine.join('\n'));
+    if (haveChange) {
+      // 將替換好的文字寫回去
+      pubspecFile.writeAsStringSync(allLine.join('\n'));
+    }
   }
 }

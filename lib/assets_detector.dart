@@ -25,7 +25,20 @@ class AssetsDetector {
   /// 隨機字串長度
   final int randomStringLength;
 
-  AssetsDetector(this.randomStringLength);
+  /// 資源路徑
+  final String assetsPath;
+
+  /// 排除路徑
+  final List<String>? excludePath;
+
+  /// 完整排除的路徑
+  List<List<String>>? _excludeAbsolutePathList;
+
+  AssetsDetector({
+    required this.randomStringLength,
+    required this.assetsPath,
+    this.excludePath,
+  });
 
   /// 搜索專案中的圖片資源
   bool searchImage(String projectPath) {
@@ -33,8 +46,14 @@ class AssetsDetector {
     allDir.clear();
     allFile.clear();
 
-    imagesPath = join(projectPath, 'assets', 'images');
+    imagesPath = join(projectPath, assetsPath);
+
     final assetsImageDir = Directory(imagesPath!);
+
+    if (excludePath != null) {
+      _excludeAbsolutePathList =
+          excludePath!.map((e) => join(projectPath, e).split('/')).toList();
+    }
 
     // 檢測路徑是否存在
     if (!assetsImageDir.existsSync()) {
@@ -45,6 +64,17 @@ class AssetsDetector {
 
     // 所有的圖片檔案
     assetsImageDir.listSync(recursive: true).forEach((element) {
+      final path = element.path;
+      // 忽略需要被排除的路徑
+      if (_checkExcludePath(path)) {
+        return;
+      }
+
+      // 忽略.DS_Store
+      if (basename(element.path) == '.DS_Store') {
+        return;
+      }
+
       if (element.statSync().type == FileSystemEntityType.file) {
         allFile.add(File(element.path));
       } else if (element.statSync().type == FileSystemEntityType.directory) {
@@ -52,10 +82,40 @@ class AssetsDetector {
       }
     });
 
-    // 去除.DS_Store檔案
-    allFile.removeWhere((element) => basename(element.path) == '.DS_Store');
-
     return true;
+  }
+
+  /// 檢查某個路徑是否需要被排除
+  bool _checkExcludePath(String path) {
+    if (_excludeAbsolutePathList != null) {
+      for (var excludePathList in _excludeAbsolutePathList!) {
+        // 一個一個檢查是否包含米字旁
+        final splitPath = path.split('/');
+        if (splitPath.length >= excludePathList.length) {
+          // 代表有可能符合排除路徑
+          for (var i = 0; i < excludePathList.length; i++) {
+            final pathElement = splitPath[i];
+            final excludeElement = excludePathList[i].replaceAll('*', '.*');
+            // print('檢查 $pathElement 是否符合 $excludeElement');
+            final regex = RegExp(excludeElement);
+
+            if (regex.hasMatch(pathElement)) {
+              // 符合排除路徑
+              // 檢查是否為最後一個路徑, 若是的話代表檢查通過
+              if (i == excludePathList.length - 1) {
+                return true;
+              }
+            } else {
+              // print('不通過');
+              // 不符合排除路徑
+              break;
+            }
+          }
+        }
+      }
+    }
+
+    return false;
   }
 
   /// 將底下的圖片資源(1. 檔名, 2. 路徑)混淆
