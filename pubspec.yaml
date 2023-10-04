@@ -1,10 +1,10 @@
 name: mx_assets_obfuscate
 description: obfuscate flutter image assets
-version: 1.0.1+1
+version: 1.0.1+2
 repository: https://github.com/MagicalWater/mx_assets_obfuscate
 
 environment:
-  sdk: ^3.1.0
+  sdk: ^3.0.6
 
 # Add regular dependencies here.
 dependencies:

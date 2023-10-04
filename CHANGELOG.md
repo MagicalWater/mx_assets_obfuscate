@@ -1,5 +1,6 @@
-## 1.0.1+1
+## 1.0.1+2
 - Update README.md
+- Lowering the required Dart SDK version
 
 ## 1.0.1
 - Option Add 
