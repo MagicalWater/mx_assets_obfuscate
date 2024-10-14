@@ -141,7 +141,7 @@ class AssetsDetector {
 
       // 混淆後的路徑列表
       final obfuscateRelativePathList =
-          relativePathList.map((e) => _randomString(e, 10)).toList();
+      relativePathList.map((e) => _randomString(e, 10)).toList();
 
       // 混淆後的相對路徑
       final obfuscatePath = obfuscateRelativePathList.join('/');
@@ -175,7 +175,7 @@ class AssetsDetector {
 
       // 混淆後的路徑列表
       final obfuscateRelativePathList =
-          relativePathList.map((e) => _randomString(e, 10)).toList();
+      relativePathList.map((e) => _randomString(e, 10)).toList();
 
       // 混淆後的相對路徑
       final obfuscatePath = obfuscateRelativePathList.join('/');
@@ -267,10 +267,10 @@ class AssetsDetector {
         // print('壓縮前: ${input.rawBytes.length} 壓縮後: ${output.rawBytes.length}');
         break;
       case ImageFormat.apng:
-        // apng壓縮完反而變大了, 不處理
+      // apng壓縮完反而變大了, 不處理
         break;
       default:
-        // 其餘不壓縮
+      // 其餘不壓縮
         break;
     }
   }

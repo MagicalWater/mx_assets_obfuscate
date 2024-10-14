@@ -20,7 +20,7 @@ class ProjectDetector {
   /// 搜索pubspec以及images檔案
   void search(String projectPath) {
     pubspecYamlPath = join(projectPath, 'pubspec.yaml');
-    imagesDartPath = join(projectPath, 'lib', 'res', 'images.dart');
+    imagesDartPath = join(projectPath, 'lib', 'r', 'r_part.dart');
 
     if (!File(pubspecYamlPath!).existsSync()) {
       print('沒有在以下路徑找到pubspec.yaml(將忽略套用): $pubspecYamlPath');
@@ -50,7 +50,7 @@ class ProjectDetector {
         haveChange = true;
         final relativePath = match.group(1)!;
         final obfuscateRelativePath =
-            relativePath.split('/').map((e) => map[e] ?? e).join('/');
+        relativePath.split('/').map((e) => map[e] ?? e).join('/');
 
         final replaceText =
             '${text.substring(0, match.start)}- $assetsPath$obfuscateRelativePath';
@@ -70,7 +70,7 @@ class ProjectDetector {
     final pubspecFile = File(imagesDartPath!);
     final allLine = pubspecFile.readAsLinesSync();
 
-    final assetsRegex = RegExp('$assetsPath(.+)"');
+    final assetsRegex = RegExp('$assetsPath(.+)\'');
 
     bool haveChange = false;
 
@@ -82,10 +82,10 @@ class ProjectDetector {
       if (match != null && match.groupCount == 1) {
         final relativePath = match.group(1)!;
         final obfuscateRelativePath =
-            relativePath.split('/').map((e) => map[e] ?? e).join('/');
+        relativePath.split('/').map((e) => map[e] ?? e).join('/');
 
         final replaceText =
-            '${text.substring(0, match.start)}$assetsPath$obfuscateRelativePath";';
+            '${text.substring(0, match.start)}$assetsPath$obfuscateRelativePath\';';
 
         allLine[i] = replaceText;
       }

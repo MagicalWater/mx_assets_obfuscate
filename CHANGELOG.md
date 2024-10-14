@@ -1,3 +1,6 @@
+## 1.1.0+1
+- Adjust the dart file path that needs to be obfuscated.
+
 ## 1.0.1+2
 - Update README.md
 - Lowering the required Dart SDK version
